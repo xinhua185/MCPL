@@ -38,40 +38,36 @@ try:
 except:
     os.makedirs(minecraftpath+'/versions')
     os.mkdir(minecraftpath+'/mods')
+v=tk.tkinter.IntVar()
 def launcherSet():
-    global minecraftpath
-    gamedirs=['官方启动器目录(C:/Users/86181/AppData/Roaming/.minecraft)','当前目录(.minecraft)','D:/Program Files (x86)/.minecraft']
+    global minecraftpath,v
+    gamedirs=['官方启动器目录(C:/Users/86181/AppData/Roaming/.minecraft)','当前目录(.minecraft)','自定义路径:('+minecraftpath+')']
     launcherSetwindow=tk.tkinter.Toplevel(window)
     launcherSetwindow.resizable(0,0)
     launcherSetwindow.title('设置')
     tk.Button(launcherSetwindow,text='当前Java路径为'+javapath,command=javaSet).pack()
-    v=tk.tkinter.IntVar()
-    v.set(1)
     #windowSetBtn = tk.Button(launcherSetwindow, text='启动器可见性',command=windowSet)
     #windowSetBtn.place(x=0,y=0)
     tk.Label(launcherSetwindow,text='游戏目录').pack()
+    index=0
     for i in gamedirs:
-        tk.Radiobutton(launcherSetwindow, variable=v, text="{}".format(i), value=i).pack()
-    logging.info(v.get())
-    if v.get()==0:
-        minecraftpath='C:/Users/86181/AppData/Roaming/.minecraft'
-    elif v.get()==2:
-        minecraftpath='D:/Program Files (x86)/.minecraft'
-    else:
-        minecraftpath='.minecraft'
+        tk.Radiobutton(launcherSetwindow, variable=v, text="{}".format(i), value=index,command=minecraftpathSet).pack()
+        index+=1
 def windowSet():
     global aaaa
     aaaa=easygui.buttonbox('启动器可见性','',['启动后关闭','启动后隐藏','保持可见'])
-def minecraftpathSet():
-    
-    
-    if temp=='官方启动器目录':
+def minecraftpathSet():  
+    global minecraftpath
+    temp=v.get()
+    logging.info(temp)
+    if temp==0:
         minecraftpath="C:/Users/86181/AppData/Roaming/.minecraft"
-    elif temp=='自定义新路径':
+    elif temp==2:
         minecraftpath=easygui.diropenbox()
-    elif temp=='当前目录':
+    elif temp==1:
         minecraftpath='.minecraft'
-    print(minecraftpath)
+    with open('minecraftpath.txt','w') as temp:
+        temp.write(minecraftpath)
 def set():
     file_path = minecraftpath+"/mods"  #文件路径
     path_list = os.listdir(file_path) #遍历整个文件夹下的文件name并返回一个列表
@@ -95,7 +91,7 @@ def run():
     else:
         return
 def download():
-    os.system('python download.pyw')
+    os.popen('python download.pyw')
 bgLabel=tk.Label(window,text=start)
 bgLabel.pack()
 def versionsListWindow():
