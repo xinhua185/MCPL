@@ -5,6 +5,7 @@ from subprocess import *
 from PIL import Image, ImageTk
 import os,easygui,time,json,logging
 from sys import argv
+import psutil
 logging.basicConfig(level=logging.NOTSET) 
 with open('version.txt') as temp:
     start=temp.read()
@@ -22,6 +23,10 @@ with open('minecraftpath.txt','r') as temp:
     minecraftpath=temp.read()
 with open('java.txt') as temp:
     javapath=temp.read()
+
+memory = psutil.virtual_memory()
+maxmon=round(( float(memory.total) / 1024 / 1024), 2)
+logging.info(maxmon)
 def javaSet():
     global javapath
     if javapath=='':
@@ -39,8 +44,16 @@ except:
     os.makedirs(minecraftpath+'/versions')
     os.mkdir(minecraftpath+'/mods')
 v=tk.tkinter.IntVar()
-def launcherSet():
-    global minecraftpath,v
+with open('lastpath.txt') as temp:
+    lastpath=temp.read()
+m=None
+mon=maxmon
+def monset():
+    global mon
+    mon=m.get()
+def Settings():
+    global minecraftpath,v,m
+    v.set(lastpath)
     gamedirs=['官方启动器目录(C:/Users/86181/AppData/Roaming/.minecraft)','当前目录(.minecraft)','自定义路径:('+minecraftpath+')']
     launcherSetwindow=tk.tkinter.Toplevel(window)
     launcherSetwindow.resizable(0,0)
@@ -53,21 +66,25 @@ def launcherSet():
     for i in gamedirs:
         tk.Radiobutton(launcherSetwindow, variable=v, text="{}".format(i), value=index,command=minecraftpathSet).pack()
         index+=1
+    m=tk.Scale(launcherSetwindow, from_=4096, to=maxmon, orient=tk.tkinter.HORIZONTAL, command=monset)
+    m.pack()
 def windowSet():
     global aaaa
     aaaa=easygui.buttonbox('启动器可见性','',['启动后关闭','启动后隐藏','保持可见'])
 def minecraftpathSet():  
     global minecraftpath
-    temp=v.get()
+    lastpath=v.get()
     logging.info(temp)
-    if temp==0:
+    if lastpath==0:
         minecraftpath="C:/Users/86181/AppData/Roaming/.minecraft"
-    elif temp==2:
+    elif lastpath==2:
         minecraftpath=easygui.diropenbox()
-    elif temp==1:
+    elif lastpath==1:
         minecraftpath='.minecraft'
     with open('minecraftpath.txt','w') as temp:
         temp.write(minecraftpath)
+    with open('lastpath.txt','w') as temp:
+        temp.write(lastpath)
 def set():
     file_path = minecraftpath+"/mods"  #文件路径
     path_list = os.listdir(file_path) #遍历整个文件夹下的文件name并返回一个列表
@@ -103,7 +120,7 @@ def versionsListWindow():
     bgLabel.forget()
     bgLabel = tk.Label(window,text=start)
     bgLabel.pack()
-launcherSetBtn = tk.Button(window, text='\n设置\n',command=launcherSet)
+launcherSetBtn = tk.Button(window, text='\n设置\n',command=Settings)
 launcherSetBtn.place(x=0, y=0)
 runBtn = tk.Button(window, text='\n启动\n',command=run)
 runBtn.place(x=969, y=550)
