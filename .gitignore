@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+minecraftpath.txt
+java.txt
+lastpath.txt
+memset.txt
+version.txt
+mcpl.json
