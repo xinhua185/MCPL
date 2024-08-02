@@ -1,4 +1,4 @@
-#codeing=gbk
+#codeing=utf-8
 import tkinter.ttk as tk
 import tkinter.messagebox as msgbox
 from subprocess import *
@@ -39,7 +39,7 @@ maxmon=int(round(( float(memory.total) / 1024 / 1024), 2))
 # except:
 #     config["maxmem"]=maxmon
 try:
-    with open('mcpl.json','r') as temp:
+    with open('mcpl.json','r',encoding="utf-8") as temp:
       config=json.load(temp) 
 except:
     #默认配置
@@ -67,7 +67,7 @@ def javaSet():
     global jpathbtn
     if config["javapath"]=='':
         if msgbox.askyesno('警告','该计算机未安装Java,是否安装?'):
-            os.system('www.java.com/zh-CN/download/manual.jsp')
+            os.system('explorer https://www.java.com/zh-CN/download/manual.jsp')
     temp=easygui.diropenbox('选择Java安装路径')
     if temp!=None:
         config["javapath"]=temp
@@ -212,5 +212,5 @@ window.mainloop()
 #     temp.write(config["start"])
 # with open('memset.txt','w') as temp:
 #     temp.write(str(config["maxmem"]))
-with open('mcpl.json','w') as temp:
+with open('mcpl.json','w',encoding="utf-8") as temp:
     json.dump(config,temp)
