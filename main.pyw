@@ -44,6 +44,7 @@ try:
 except:
     #默认配置
     config={
+        "sd_mode":"启动后关闭",
         "start":"",
         "javapath":"",
         "version":"",
@@ -58,7 +59,6 @@ icon_path = parent + '/MCPL.ico'
 window.resizable(0, 0)
 window.iconbitmap(icon_path)
 window.title('MCPL')
-sd_mode='启动后关闭'
 bg = ImageTk.PhotoImage(file='bg.png')
 bgLabel = tk.Label(window,image=bg)
 load.forget()
@@ -127,14 +127,14 @@ def Settings():
     memsca=tk.Scale(launcherSetwindow, from_=0, to=maxmon, orient=tk.tkinter.HORIZONTAL,length=1000, command=monset)
     memsca.pack()
     memsca.set(config["maxmem"])
-    sdbtn=tk.Button(launcherSetwindow,text='启动器可见性:'+sd_mode,command=windowSet)
+    sdbtn=tk.Button(launcherSetwindow,text='启动器可见性:'+config["sd_mode"],command=windowSet)
     sdbtn.pack()
 def windowSet():
-    global sd_mode,sdbtn,versionsList
+    global sdbtn,versionsList
     temp=easygui.buttonbox('启动器可见性','',['启动后关闭','启动后隐藏','保持可见'])
     if temp!=None:
-        sd_mode=temp
-        sdbtn.config(text='启动器可见性:'+sd_mode)
+        config["sd_mode"]=temp
+        sdbtn.config(text='启动器可见性:'+config["sd_mode"])
 def minecraftpathSet():  
     global versionsList,gamedirs,gamedirbtn
     config["lastpath"]=gamedirvar.get()
@@ -173,9 +173,9 @@ def run():
     ###启动命令###
     
     ###
-    if sd_mode=='启动后关闭':
+    if config["sd_mode"]=='启动后关闭':
         exit()
-    elif sd_mode=='启动后隐藏':
+    elif config["sd_mode"]=='启动后隐藏':
         pass
     else:
         return
