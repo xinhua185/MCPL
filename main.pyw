@@ -68,7 +68,7 @@ def javaSet():
     if config["javapath"]=='':
         if msgbox.askyesno('警告','该计算机未安装Java,是否安装?'):
             os.system('www.java.com/zh-CN/download/manual.jsp')
-    temp=easygui.diropenbox('选择Java安装路径',default='C:Program Files')
+    temp=easygui.diropenbox('选择Java安装路径')
     if temp!=None:
         config["javapath"]=temp
         jpathbtn.config(text='当前Java路径为:'+config["javapath"])
