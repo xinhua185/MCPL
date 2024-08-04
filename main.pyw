@@ -1,14 +1,19 @@
 #codeing=utf-8
 import tkinter.ttk as tk
 import tkinter.messagebox as msgbox
-from subprocess import *
+import subprocess
 from PIL import ImageTk
 import os,easygui,json
 from sys import argv
-import psutil
+import psutil,urllib3,platform
 window = tk.tkinter.Tk()
 load=tk.Label(window,text="加载中")
 load.pack()
+systype=platform.system()
+if(platform.machine().endswith('64')):
+    cputype='64'
+else:
+    cputype=''
 memory = psutil.virtual_memory()
 maxmon=int(round(( float(memory.total) / 1024 / 1024), 2))
 #读取启动信息
@@ -67,7 +72,31 @@ def javaSet():
     global jpathbtn
     if config["javapath"]=='':
         if msgbox.askyesno('警告','该计算机未安装Java,是否安装?'):
-            os.system('explorer https://www.java.com/zh-CN/download/manual.jsp')
+            # os.system('explorer https://www.java.com/zh-CN/download/manual.jsp')
+            javalistresponse=urllib3.request('GET','https://bmclapi2.bangbang93.com/java/list')
+            javalist=json.loads(javalistresponse.data.decode("utf-8"))
+            print(javalist)
+            f=0
+            for i in javalist:
+                if(i['title'].find(systype)!=-1):
+                    f=1
+                    if(i['file'].find(cputype)!=-1):
+                        msgbox.showinfo('下载','正在下载适合当前系统的java安装包')
+                        file_name=i['file']
+                        print(file_name)
+                        try:
+                            java_inst=subprocess.Popen(file_name,shell=True)
+                        except:
+                            pool=urllib3.PoolManager()
+                            with open(file_name, 'wb') as f:
+                                with pool.request('GET', 'https://bmclapi2.bangbang93.com/java/'+file_name, preload_content=False) as resp:
+                                    for chunk in resp.stream():
+                                        f.write(chunk)
+                            java_inst=subprocess.Popen(file_name,shell=True)
+                        # java_inst.wait()
+                        break
+            if(f==0):
+                msgbox.showerror('错误','暂未支持该操作系统,请手动下载并安装java')
     temp=easygui.diropenbox('选择Java安装路径')
     if temp!=None:
         config["javapath"]=temp
